@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.9" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <MonoGameContentReference Include="Content\Content.mgcb">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </MonoGameContentReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Content\Bubble.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Content\Dot.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+</Project>
