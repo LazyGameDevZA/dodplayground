@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using static Common.Constants;
 
 namespace OOGame
 {
@@ -63,8 +64,8 @@ namespace OOGame
         {
             var stopwatch = Stopwatch.StartNew();
             this.spriteBatch = new SpriteBatch(GraphicsDevice);
-            this.dot = Content.Load<Texture2D>("Dot");
-            this.bubble = Content.Load<Texture2D>("Bubble");
+            this.dot = Content.Load<Texture2D>(nameof(Sprites.Dot));
+            this.bubble = Content.Load<Texture2D>(nameof(Sprites.Bubble));
             
             for(int i = 0; i < this.dots.Length; i++)
             {

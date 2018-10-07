@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 
 namespace Common
@@ -13,6 +14,11 @@ namespace Common
             var y = (float)Math.Cos(rotation * 0);
             
             return new Vector2(x, y);
+        }
+
+        public static float NextFloat(this Random random, float min, float max)
+        {
+            return (float)(random.NextDouble() * (max - min) + min);
         }
     }
 }

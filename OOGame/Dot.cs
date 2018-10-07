@@ -4,14 +4,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ObjectOriented;
 using MathF = System.MathF;
+using static Common.Constants.Dot;
 
 namespace OOGame
 {
     internal class Dot : IGameObject
     {
-        private const float maxVelocity = 100.0f;
-        private const float minVelocity = 30.0f;
-        
         private readonly Random random;
         private readonly Bubble[] bubbles;
 
@@ -48,7 +46,7 @@ namespace OOGame
             this.positionX = this.random.Next(this.boundX);
             this.positionY = this.random.Next(this.boundY);
 
-            var velocityMagnitude = (float)this.random.NextDouble() * (maxVelocity - minVelocity) + minVelocity;
+            var velocityMagnitude = (float)this.random.NextDouble() * (MaxVelocity - MinVelocity) + MinVelocity;
             var velocity = this.random.NextVector2() * velocityMagnitude;
 
             this.velocityX = velocity.X;
@@ -73,10 +71,10 @@ namespace OOGame
             this.positionX += this.velocityX * (float)gameTime.ElapsedGameTime.TotalSeconds;
             this.positionY += this.velocityY * (float)gameTime.ElapsedGameTime.TotalSeconds;
             
-            var minX = 0 + this.HorizontalSize;
-            var maxX = this.boundX - this.HorizontalSize;
-            var minY = 0 + this.VerticalSize;
-            var maxY = this.boundY - this.VerticalSize;
+            const int minX = 0;
+            var maxX = this.boundX;
+            const int minY = 0;
+            var maxY = this.boundY;
 
             if(this.positionX < minX || this.positionX > maxX)
             {
@@ -101,7 +99,7 @@ namespace OOGame
                 {
                     var velocity = new Vector2(this.velocityX, this.velocityY);
                     velocity = velocity + velocity * (bubble.VelocityModifier * (float)gameTime.ElapsedGameTime.TotalSeconds);
-                    velocity = velocity.ClampMagnitude(minVelocity, maxVelocity);
+                    velocity = velocity.ClampMagnitude(MinVelocity, MaxVelocity);
 
                     this.velocityX = velocity.X;
                     this.velocityY = velocity.Y;

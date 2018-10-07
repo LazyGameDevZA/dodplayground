@@ -75,10 +75,10 @@ namespace OOGame
             this.PositionX += this.velocityX * (float)gameTime.ElapsedGameTime.TotalSeconds;
             this.PositionY += this.velocityY * (float)gameTime.ElapsedGameTime.TotalSeconds;
             
-            var minX = 0 + this.HorizontalSize;
-            var maxX = this.boundX - this.HorizontalSize;
-            var minY = 0 + this.VerticalSize;
-            var maxY = this.boundY - this.VerticalSize;
+            var minX = 0;
+            var maxX = this.boundX;
+            var minY = 0;
+            var maxY = this.boundY;
 
             if(this.PositionX < minX || this.PositionX > maxX)
             {
