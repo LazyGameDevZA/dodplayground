@@ -17,7 +17,6 @@ namespace ComponentGame
     public class ComponentGame : Game
     {
         private readonly GraphicsDeviceManager graphics;
-        private readonly Texture2D[] texture2Ds;
         private readonly int entityCount;
         private readonly int velocityModifierCount;
         private readonly PositionComponent[] positionComponents;
@@ -40,7 +39,6 @@ namespace ComponentGame
             IsMouseVisible = true;
             IsFixedTimeStep = false;
             
-            this.texture2Ds = new Texture2D[2];
             this.entityCount = DotCount + BubbleCount;
             this.positionComponents = new PositionComponent[this.entityCount];
             this.velocityConstraintComponents = new VelocityConstraintComponent[this.entityCount];
@@ -73,8 +71,7 @@ namespace ComponentGame
             for(int i = 0; i < this.entityCount; i++)
             {
                 var position = new PositionComponent();
-                position.X = random.Next(minX, maxX);
-                position.Y = random.Next(minY, maxY);
+                position.Value = new Vector2(random.Next(minX, maxX), random.Next(minY, maxY));
                 this.positionComponents[i] = position;
 
                 var entityTypePredicate = i >= DotCount;
@@ -87,9 +84,7 @@ namespace ComponentGame
                 this.velocityConstraintComponents[i] = velocityConstraint;
 
                 var velocity = new VelocityComponent();
-                var velVector = random.NextVelocity(velMin, velMax);
-                velocity.X = velVector.X;
-                velocity.Y = velVector.Y;
+                velocity.Value = random.NextVelocity(velMin, velMax);
                 this.velocityComponents[i] = velocity;
                 
                 var velocityModifierValue = (float)random.NextDouble() * (Bubble.MaxModifier - Bubble.MinModifier) + Bubble.MinModifier;
@@ -132,10 +127,11 @@ namespace ComponentGame
 
             var spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            this.texture2Ds[Sprites.Dot] = Content.Load<Texture2D>(nameof(Sprites.Dot));
-            this.texture2Ds[Sprites.Bubble] = Content.Load<Texture2D>(nameof(Sprites.Bubble));
+            var texture2Ds = new Texture2D[2];
+            texture2Ds[Sprites.Dot] = Content.Load<Texture2D>(nameof(Sprites.Dot));
+            texture2Ds[Sprites.Bubble] = Content.Load<Texture2D>(nameof(Sprites.Bubble));
             
-            this.drawSystem = new DrawSystem(spriteBatch, this.texture2Ds, this.entityCount, this.positionComponents, this.spriteComponents);
+            this.drawSystem = new DrawSystem(spriteBatch, texture2Ds, this.entityCount, this.positionComponents, this.spriteComponents);
 
             PerfMon.InitializeFinished(perfSpriteBatch, font);
         }

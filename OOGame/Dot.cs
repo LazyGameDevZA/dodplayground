@@ -3,7 +3,7 @@ using Common;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ObjectOriented;
-using MathF = System.MathF;
+using MathF = Common.MathF;
 using static Common.Constants.Dot;
 
 namespace OOGame
@@ -16,11 +16,9 @@ namespace OOGame
         private int boundX;
         private int boundY;
         
-        private float positionX;
-        private float positionY;
+        private Vector2 position;
 
-        private float velocityX;
-        private float velocityY;
+        private Vector2 velocity;
 
         private byte red;
         private byte green;
@@ -43,15 +41,11 @@ namespace OOGame
             this.boundX = graphics.PreferredBackBufferWidth;
             this.boundY = graphics.PreferredBackBufferHeight;
             
-            this.positionX = this.random.Next(this.boundX);
-            this.positionY = this.random.Next(this.boundY);
+            this.position = new Vector2(this.random.Next(this.boundX), this.random.Next(this.boundY));
 
             var velocityMagnitude = (float)this.random.NextDouble() * (MaxVelocity - MinVelocity) + MinVelocity;
-            var velocity = this.random.NextVector2() * velocityMagnitude;
+            this.velocity = this.random.NextVector2() * velocityMagnitude;
 
-            this.velocityX = velocity.X;
-            this.velocityY = velocity.Y;
-                
             var colors = new byte[3];
             this.random.NextBytes(colors);
 
@@ -68,53 +62,41 @@ namespace OOGame
 
         public void Update(GameTime gameTime)
         {
-            this.positionX += this.velocityX * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            this.positionY += this.velocityY * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            this.position += this.velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             
             const int minX = 0;
             var maxX = this.boundX;
             const int minY = 0;
             var maxY = this.boundY;
 
-            if(this.positionX < minX || this.positionX > maxX)
-            {
-                this.velocityX *= -1;
-            }
+            var x = MathF.Select(1, -1, this.position.X < minX || this.position.X > maxX);
+            var y = MathF.Select(1, -1, this.position.Y < minY || this.position.Y > maxY);
+            var multiply = new Vector2(x, y);
 
-            if(this.positionY < minY || this.positionY > maxY)
-            {
-                this.velocityY *= -1;
-            }
+            this.velocity *= multiply;
 
-            this.positionX = this.positionX.Clamp(minX, maxX);
-            this.positionY = this.positionY.Clamp(minY, maxY);
+            this.position = new Vector2(this.position.X.Clamp(minX, maxX), this.position.Y.Clamp(minY, maxY));
 
             for(int i = 0; i < this.bubbles.Length; i++)
             {
                 var bubble = this.bubbles[i];
-                var diffX = MathF.Abs(this.positionX - bubble.PositionX);
-                var diffY = MathF.Abs(this.positionY - bubble.PositionY);
+                var diff = this.position - bubble.Position;
 
-                if(!(diffX < bubble.HorizontalSize) || !(diffY < bubble.VerticalSize))
+                if(System.MathF.Pow(bubble.Size, 2) < diff.LengthSquared())
                 {
                     continue;
                 }
                 
-                var velocity = new Vector2(this.velocityX, this.velocityY);
-                velocity = velocity + velocity * (bubble.VelocityModifier * (float)gameTime.ElapsedGameTime.TotalSeconds);
-                velocity = velocity.ClampMagnitude(MinVelocity, MaxVelocity);
-
-                this.velocityX = velocity.X;
-                this.velocityY = velocity.Y;
+                this.velocity = this.velocity + this.velocity * (bubble.VelocityModifier * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                this.velocity = this.velocity.ClampMagnitude(MinVelocity, MaxVelocity);
             }
         }
 
         public void Draw(GameTime gameTime)
         {
-            var position = new Vector2(this.positionX, this.positionY);
             var color = new Color(this.red, this.green, this.blue, byte.MaxValue);
             var origin = new Vector2(this.HorizontalSize, this.VerticalSize);
-            this.spriteBatch.Draw(this.texture2D, position, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
+            this.spriteBatch.Draw(this.texture2D, this.position, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
         }
     }
 }

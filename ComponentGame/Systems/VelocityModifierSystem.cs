@@ -10,7 +10,7 @@ namespace ComponentGame.Systems
         private readonly int length;
         private readonly int velocityModifierOffset;
         private readonly PositionComponent[] positionComponents;
-        private readonly VelocityConstraintComponent[] velocityConstraintComponents;
+        private readonly VelocityConstraintComponent[] constraintComponents;
         private readonly VelocityComponent[] velocityComponents;
         private readonly SizeComponent[] sizeComponents;
         private readonly VelocityModifierComponent[] modifierComponents;
@@ -19,7 +19,7 @@ namespace ComponentGame.Systems
             int length,
             int velocityModifierLength,
             PositionComponent[] positionComponents,
-            VelocityConstraintComponent[] velocityConstraintComponents,
+            VelocityConstraintComponent[] constraintComponents,
             VelocityComponent[] velocityComponents,
             SizeComponent[] sizeComponents,
             VelocityModifierComponent[] modifierComponents)
@@ -30,7 +30,7 @@ namespace ComponentGame.Systems
             this.velocityComponents = velocityComponents;
             this.sizeComponents = sizeComponents;
             this.modifierComponents = modifierComponents;
-            this.velocityConstraintComponents = velocityConstraintComponents;
+            this.constraintComponents = constraintComponents;
         }
 
         public void Update(float deltaTime)
@@ -39,22 +39,19 @@ namespace ComponentGame.Systems
             {
                 for(int j = 0; j < this.velocityModifierOffset; j++)
                 {
-                    var diffX = MathF.Abs(this.positionComponents[j].X - this.positionComponents[i].X);
-                    var diffY = MathF.Abs(this.positionComponents[j].Y - this.positionComponents[i].Y);
+                    var diff = this.positionComponents[j].Value - this.positionComponents[i].Value;
 
                     var modifierIndex = i - this.velocityModifierOffset;
-                    if(MathF.Pow(this.sizeComponents[modifierIndex].Value, 2) < MathF.Pow(diffX, 2) + MathF.Pow(diffY, 2))
+                    if(MathF.Pow(this.sizeComponents[modifierIndex].Value, 2) < diff.LengthSquared())
                     {
                         continue;
                     }
-                    
-                    var velocityVec = new Vector2(this.velocityComponents[j].X, this.velocityComponents[j].Y);
-                    velocityVec = velocityVec + velocityVec * this.modifierComponents[modifierIndex].Value * deltaTime;
-                    velocityVec = velocityVec.ClampMagnitude(this.velocityConstraintComponents[j].Min, this.velocityConstraintComponents[j].Max);
 
-                    var velocity = new VelocityComponent();
-                    velocity.X = velocityVec.X;
-                    velocity.Y = velocityVec.Y;
+                    var velocity = this.velocityComponents[j];
+                    var velocityValue = velocity.Value;
+                    velocityValue = velocityValue + velocityValue * this.modifierComponents[modifierIndex].Value * deltaTime;
+                    velocity.Value = velocityValue.ClampMagnitude(this.constraintComponents[j].Min, this.constraintComponents[j].Max);
+
                     this.velocityComponents[j] = velocity;
                 }
             }

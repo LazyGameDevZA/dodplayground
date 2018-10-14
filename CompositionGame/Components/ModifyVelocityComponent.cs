@@ -39,18 +39,16 @@ namespace CompositionGame.Components
         {
             for(var i = 0; i < modifierPositions.Count; i++)
             {
-                var diffX = MathF.Abs(this.position.X - modifierPositions[i].X);
-                var diffY = MathF.Abs(this.position.Y - modifierPositions[i].Y);
+                var diff = this.position.Value - modifierPositions[i].Value;
 
-                if(MathF.Pow(modifierSizes[i].Size, 2) < MathF.Pow(diffX, 2) + MathF.Pow(diffY, 2))
+                if(MathF.Pow(modifierSizes[i].Size, 2) < diff.LengthSquared())
                 {
                     continue;
                 }
 
-                var velocity = new Vector2(this.velocity.X, this.velocity.Y);
-                velocity = velocity + velocity * (velocityModifiers[i].VelocityModifier) * deltaTime;
+                var velocity = this.velocity.Value + this.velocity.Value * (velocityModifiers[i].VelocityModifier) * deltaTime;
 
-                this.velocity.SetVelocity(velocity.X, velocity.Y);
+                this.velocity.SetVelocity(velocity);
             }
         }
     }

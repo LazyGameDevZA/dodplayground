@@ -1,7 +1,9 @@
+using Microsoft.Xna.Framework;
+
 namespace ComponentGame.Components
 {
     public struct VelocityComponent
     {
-        public float X, Y;
+        public Vector2 Value;
     }
 }

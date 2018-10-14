@@ -9,8 +9,7 @@ namespace OOGame
 {
     internal class Bubble : IGameObject
     {
-        public float PositionX { get; private set; }
-        public float PositionY { get; private set; }
+        public Vector2 Position { get; private set; }
 
         public float VelocityModifier { get; private set; }
 
@@ -24,8 +23,7 @@ namespace OOGame
         private int boundX;
         private int boundY;
 
-        private float velocityX;
-        private float velocityY;
+        private Vector2 velocity;
 
         private byte red;
         private byte green;
@@ -34,8 +32,7 @@ namespace OOGame
         private SpriteBatch spriteBatch;
         private Texture2D texture2D;
 
-        public float HorizontalSize => this.texture2D.Width / 2;
-        public float VerticalSize => this.texture2D.Height / 2;
+        public float Size => 64;
 
         public Bubble(Random random)
         {
@@ -47,14 +44,10 @@ namespace OOGame
             this.boundX = graphics.PreferredBackBufferWidth;
             this.boundY = graphics.PreferredBackBufferHeight;
             
-            this.PositionX = this.random.Next(this.boundX);
-            this.PositionY = this.random.Next(this.boundY);
+            this.Position = new Vector2(this.random.Next(this.boundX), this.random.Next(this.boundY));
 
             var velocityMagnitude = (float)this.random.NextDouble() * (maxVelocity - minVelocity) + minVelocity;
-            var velocity = this.random.NextVector2() * velocityMagnitude;
-
-            this.velocityX = velocity.X;
-            this.velocityY = velocity.Y;
+            this.velocity = this.random.NextVector2() * velocityMagnitude;
 
             this.VelocityModifier = (float)this.random.NextDouble() * (maxModifier - minModifier) + minModifier;
 
@@ -72,34 +65,27 @@ namespace OOGame
 
         public void Update(GameTime gameTime)
         {
-            this.PositionX += this.velocityX * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            this.PositionY += this.velocityY * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            this.Position += this.velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
             
             const int minX = 0;
             var maxX = this.boundX;
             const int minY = 0;
             var maxY = this.boundY;
 
-            if(this.PositionX < minX || this.PositionX > maxX)
-            {
-                this.velocityX *= -1;
-            }
+            var x = MathF.Select(1, -1, this.Position.X < minX || this.Position.X > maxX);
+            var y = MathF.Select(1, -1, this.Position.Y < minY || this.Position.Y > maxY);
+            var multiply = new Vector2(x, y);
 
-            if(this.PositionY < minY || this.PositionY > maxY)
-            {
-                this.velocityY *= -1;
-            }
+            this.velocity *= multiply;
 
-            this.PositionX = this.PositionX.Clamp(minX, maxX);
-            this.PositionY = this.PositionY.Clamp(minY, maxY);
+            this.Position = new Vector2(this.Position.X.Clamp(minX, maxX), this.Position.Y.Clamp(minY, maxY));
         }
 
         public void Draw(GameTime gameTime)
         {
-            var position = new Vector2(this.PositionX, this.PositionY);
             var color = new Color(this.red, this.green, byte.MinValue, this.alpha);
-            var origin = new Vector2(this.HorizontalSize, this.VerticalSize);
-            this.spriteBatch.Draw(this.texture2D, position, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
+            var origin = new Vector2(this.texture2D.Width / 2, this.texture2D.Height / 2);
+            this.spriteBatch.Draw(this.texture2D, this.Position, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
         }
     }
 }

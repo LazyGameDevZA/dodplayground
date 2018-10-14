@@ -2,6 +2,7 @@ using System;
 using Common;
 using Microsoft.Xna.Framework;
 using static CompositionGame.Utilities.ComponentUtilities;
+using MathF = Common.MathF;
 
 namespace CompositionGame.Components
 {
@@ -9,7 +10,8 @@ namespace CompositionGame.Components
     {
         private readonly float minVelocity, maxVelocity;
         
-        public float X, Y;
+        public Vector2 Value;
+        
         private WorldBoundsComponent bounds;
         private PositionComponent position;
 
@@ -19,8 +21,7 @@ namespace CompositionGame.Components
             var speed = random.NextFloat(minVelocity, maxVelocity);
             var velocity = direction * speed;
 
-            this.X = velocity.X;
-            this.Y = velocity.Y;
+            this.Value = velocity;
             this.minVelocity = minVelocity;
             this.maxVelocity = maxVelocity;
         }
@@ -33,30 +34,20 @@ namespace CompositionGame.Components
 
         public override void Update(float deltaTime)
         {
-            this.position.X += this.X * deltaTime;
-            this.position.Y += this.Y * deltaTime;
+            this.position.Value += this.Value * deltaTime;
 
-            if(this.position.X < this.bounds.MinX || this.position.X > this.bounds.MaxX)
-            {
-                this.X *= -1;
-            }
+            var x = MathF.Select(1, -1, position.Value.X < this.bounds.MinX || position.Value.X > this.bounds.MaxX);
+            var y = MathF.Select(1, -1, position.Value.Y < this.bounds.MinY || position.Value.Y > this.bounds.MaxY);
+            var multiply = new Vector2(x, y);
 
-            if(this.position.Y < this.bounds.MinY || this.position.Y > this.bounds.MaxY)
-            {
-                this.Y *= -1;
-            }
+            this.Value *= multiply;
             
-            this.position.X = this.position.X.Clamp(this.bounds.MinX, this.bounds.MaxX);
-            this.position.Y = this.position.Y.Clamp(this.bounds.MinY, this.bounds.MaxY);
+            this.position.Value = new Vector2(position.Value.X.Clamp(this.bounds.MinX, this.bounds.MaxX), position.Value.Y.Clamp(this.bounds.MinY, this.bounds.MaxY));
         }
 
-        public void SetVelocity(float velX, float velY)
+        public void SetVelocity(Vector2 velocity)
         {
-            var velocity = new Vector2(velX, velY);
-            velocity = velocity.ClampMagnitude(this.minVelocity, this.maxVelocity);
-
-            this.X = velocity.X;
-            this.Y = velocity.Y;
+            this.Value = velocity.ClampMagnitude(this.minVelocity, this.maxVelocity);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace ComponentGame.Systems
             for(int i = 0; i < this.length; i++)
             {
                 var texture2D = this.texture2Ds[this.spriteComponents[i].Index];
-                var position = new Vector2(this.positionComponents[i].X, this.positionComponents[i].Y);
+                var position = new Vector2(this.positionComponents[i].Value.X, this.positionComponents[i].Value.Y);
                 var color = new Color(this.spriteComponents[i].ColorR, this.spriteComponents[i].ColorG, this.spriteComponents[i].ColorB, this.spriteComponents[i].Alpha);
                 var origin = new Vector2(texture2D.Width / 2, texture2D.Height / 2);
                 this.spriteBatch.Draw(texture2D, position, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);

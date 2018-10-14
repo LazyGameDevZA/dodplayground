@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Xna.Framework;
 using static CompositionGame.Utilities.ComponentUtilities;
 
 namespace CompositionGame.Components
@@ -7,7 +8,7 @@ namespace CompositionGame.Components
     {
         private readonly Random random;
         
-        public float X, Y;
+        public Vector2 Value;
 
         public PositionComponent(Random random)
         {
@@ -17,8 +18,10 @@ namespace CompositionGame.Components
         public override void Start()
         {
             var worldBoundsComponent = FindOfType<WorldBoundsComponent>();
-            this.X = random.Next(worldBoundsComponent.MinX, worldBoundsComponent.MaxX);
-            this.Y = random.Next(worldBoundsComponent.MinY, worldBoundsComponent.MaxY);
+            var x = random.Next(worldBoundsComponent.MinX, worldBoundsComponent.MaxX);
+            var y = random.Next(worldBoundsComponent.MinY, worldBoundsComponent.MaxY);
+
+            this.Value = new Vector2(x, y);
         }
     }
 }

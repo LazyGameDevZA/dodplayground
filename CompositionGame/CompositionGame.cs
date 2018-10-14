@@ -148,16 +148,15 @@ namespace CompositionGame
             this.spriteBatch.Begin();
             foreach(var gameObject in s_GameObjects)
             {
-                var pos = gameObject.GetComponent<PositionComponent>();
+                var position = gameObject.GetComponent<PositionComponent>();
                 var sprite = gameObject.GetComponent<SpriteComponent>();
 
-                if(pos != null && sprite != null)
+                if(position != null && sprite != null)
                 {
                     var texture2D = this.texture2Ds[sprite.Index];
-                    var position = new Vector2(pos.X, pos.Y);
                     var color = new Color(sprite.ColorR, sprite.ColorG, sprite.ColorB, sprite.Alpha);
                     var origin = new Vector2(texture2D.Width / 2, texture2D.Height / 2);
-                    this.spriteBatch.Draw(texture2D, position, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
+                    this.spriteBatch.Draw(texture2D, position.Value, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
                 }
             }
             this.spriteBatch.End();

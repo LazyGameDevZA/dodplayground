@@ -1,6 +1,8 @@
+using System.Numerics;
 using Common;
 using ComponentGame.Components;
 using Microsoft.Xna.Framework;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace ComponentGame.Systems
 {
@@ -28,23 +30,17 @@ namespace ComponentGame.Systems
             {
                 var position = this.positionComponents[i];
 
-                position.X += this.velocityComponents[i].X * deltaTime;
-                position.Y += this.velocityComponents[i].Y * deltaTime;
+                position.Value += this.velocityComponents[i].Value * deltaTime;
 
                 var velocity = this.velocityComponents[i];
 
-                if(position.X < this.minX || position.X > this.maxX)
-                {
-                    velocity.X *= -1;
-                }
+                var x = MathF.Select(1, -1, position.Value.X < this.minX || position.Value.X > this.maxX);
+                var y = MathF.Select(1, -1, position.Value.Y < this.minY || position.Value.Y > this.maxY);
+                var multiply = new Vector2(x, y);
 
-                if(position.Y < this.minY || position.Y > this.maxY)
-                {
-                    velocity.Y *= -1;
-                }
+                velocity.Value *= multiply;
 
-                position.X = position.X.Clamp(this.minX, this.maxX);
-                position.Y = position.Y.Clamp(this.minY, this.maxY);
+                position.Value = new Vector2(position.Value.X.Clamp(this.minX, this.maxX), position.Value.Y.Clamp(this.minY, this.maxY));
 
                 this.positionComponents[i] = position;
                 this.velocityComponents[i] = velocity;
