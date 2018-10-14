@@ -25,6 +25,11 @@ namespace CompositionGame
             this.Content.RootDirectory = "Content";
             this.IsMouseVisible = true;
             this.IsFixedTimeStep = false;
+            
+            var worldBoundsGameObject = new GameObject("World Bounds");
+            var worldBoundsComponent = new WorldBoundsComponent(this.graphics);
+            worldBoundsGameObject.AddComponent(worldBoundsComponent);
+            s_GameObjects.Add(worldBoundsGameObject);
 
             var random = new Random();
             
@@ -45,7 +50,7 @@ namespace CompositionGame
                 spriteComponent.ColorG = colors[1];
                 spriteComponent.ColorB = colors[2];
                 spriteComponent.Alpha = byte.MaxValue;
-                spriteComponent.index = Sprites.Dot;
+                spriteComponent.Index = Sprites.Dot;
                 gameObject.AddComponent(spriteComponent);
                 
                 var modifyVelocityComponent = new ModifyVelocityComponent();
@@ -72,7 +77,7 @@ namespace CompositionGame
                 spriteComponent.ColorB = byte.MinValue;
                 var scaleMax = MathF.Select(Bubble.MinModifier, Bubble.MaxModifier, velocityModifier >= 0.0f);
                 spriteComponent.Alpha = (byte)(int)(128 * (velocityModifier / scaleMax));
-                spriteComponent.index = Sprites.Bubble;
+                spriteComponent.Index = Sprites.Bubble;
                 gameObject.AddComponent(spriteComponent);
 
                 var velocityModifierComponent = new VelocityModifierComponent();
@@ -95,11 +100,6 @@ namespace CompositionGame
             this.graphics.PreferredBackBufferHeight = displaySize.Height - 100;
             this.graphics.PreferredBackBufferWidth = displaySize.Width;
             this.graphics.ApplyChanges();
-            
-            var worldBoundsGameObject = new GameObject("World Bounds");
-            var worldBoundsComponent = new WorldBoundsComponent(this.graphics);
-            worldBoundsGameObject.AddComponent(worldBoundsComponent);
-            s_GameObjects.Add(worldBoundsGameObject);
 
             for(var i = 0; i < s_GameObjects.Count; i++)
             {
@@ -154,7 +154,7 @@ namespace CompositionGame
 
                 if(pos != null && sprite != null)
                 {
-                    var texture2D = this.texture2Ds[sprite.index];
+                    var texture2D = this.texture2Ds[sprite.Index];
                     var position = new Vector2(pos.X, pos.Y);
                     var color = new Color(sprite.ColorR, sprite.ColorG, sprite.ColorB, sprite.Alpha);
                     var origin = new Vector2(texture2D.Width / 2, texture2D.Height / 2);
