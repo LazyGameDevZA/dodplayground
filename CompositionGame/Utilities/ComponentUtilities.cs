@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using static CompositionGame.Scene;
 
 namespace CompositionGame.Utilities
@@ -8,7 +9,7 @@ namespace CompositionGame.Utilities
         public static IList<TComponent> FindAllComponentsOfType<TComponent>()
             where TComponent: class, IComponent
         {
-            var components = new List<TComponent>();
+            var components = new List<TComponent>(s_GameObjects.Count);
 
             foreach(var gameObject in s_GameObjects)
             {

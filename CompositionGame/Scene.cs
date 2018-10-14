@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using static Common.Constants;
 
 namespace CompositionGame
 {
@@ -8,7 +9,7 @@ namespace CompositionGame
 
         static Scene()
         {
-            s_GameObjects = new List<GameObject>();
+            s_GameObjects = new List<GameObject>(DotCount + BubbleCount + 1);
         }
     }
 }

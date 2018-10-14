@@ -95,15 +95,17 @@ namespace OOGame
                 var diffX = MathF.Abs(this.positionX - bubble.PositionX);
                 var diffY = MathF.Abs(this.positionY - bubble.PositionY);
 
-                if(diffX < bubble.HorizontalSize && diffY < bubble.VerticalSize)
+                if(!(diffX < bubble.HorizontalSize) || !(diffY < bubble.VerticalSize))
                 {
-                    var velocity = new Vector2(this.velocityX, this.velocityY);
-                    velocity = velocity + velocity * (bubble.VelocityModifier * (float)gameTime.ElapsedGameTime.TotalSeconds);
-                    velocity = velocity.ClampMagnitude(MinVelocity, MaxVelocity);
-
-                    this.velocityX = velocity.X;
-                    this.velocityY = velocity.Y;
+                    continue;
                 }
+                
+                var velocity = new Vector2(this.velocityX, this.velocityY);
+                velocity = velocity + velocity * (bubble.VelocityModifier * (float)gameTime.ElapsedGameTime.TotalSeconds);
+                velocity = velocity.ClampMagnitude(MinVelocity, MaxVelocity);
+
+                this.velocityX = velocity.X;
+                this.velocityY = velocity.Y;
             }
         }
 

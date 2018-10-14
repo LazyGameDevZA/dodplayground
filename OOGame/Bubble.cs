@@ -56,7 +56,7 @@ namespace OOGame
             this.velocityX = velocity.X;
             this.velocityY = velocity.Y;
 
-            this.VelocityModifier = ((float)this.random.NextDouble() * (maxModifier - minModifier) + minModifier);
+            this.VelocityModifier = (float)this.random.NextDouble() * (maxModifier - minModifier) + minModifier;
 
             this.red = MathB.Select(0, byte.MaxValue, this.VelocityModifier < 0.0f);
             this.green = MathB.Select(0, byte.MaxValue, this.VelocityModifier >= 0.0f);
@@ -75,9 +75,9 @@ namespace OOGame
             this.PositionX += this.velocityX * (float)gameTime.ElapsedGameTime.TotalSeconds;
             this.PositionY += this.velocityY * (float)gameTime.ElapsedGameTime.TotalSeconds;
             
-            var minX = 0;
+            const int minX = 0;
             var maxX = this.boundX;
-            var minY = 0;
+            const int minY = 0;
             var maxY = this.boundY;
 
             if(this.PositionX < minX || this.PositionX > maxX)

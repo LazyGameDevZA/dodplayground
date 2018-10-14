@@ -4,7 +4,7 @@ namespace CompositionGame.Components
 {
     internal class WorldBoundsComponent : Component
     {
-        public int MinX, MinY, MaxX, MaxY;
+        public readonly int MinX, MinY, MaxX, MaxY;
 
         public WorldBoundsComponent(GraphicsDeviceManager graphics)
         {

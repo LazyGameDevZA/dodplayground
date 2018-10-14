@@ -1,20 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using Common.PerformanceMonitoring;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ObjectOriented;
 using static Common.Constants;
 
 namespace OOGame
 {
     public class ObjectOrientedGame : Game
     {
-        private readonly int dotCount;
-        private readonly int bubbleCount;
         private readonly GraphicsDeviceManager graphics;
-
-        private Dot[] dots;
-        private Bubble[] bubbles;
+        private readonly IList<IGameObject> gameObjects;
 
         private SpriteBatch spriteBatch;
         private Texture2D dot;
@@ -25,104 +24,102 @@ namespace OOGame
             this.graphics = new GraphicsDeviceManager(this);
             this.Content.RootDirectory = "Content";
             this.IsMouseVisible = true;
-
-            this.dotCount = 1000000;
-            this.bubbleCount = 20;
+            this.IsFixedTimeStep = false;
+            this.gameObjects = new List<IGameObject>(DotCount + BubbleCount);
+            
+            
         }
 
         protected override void Initialize()
         {
-            var stopwatch = Stopwatch.StartNew();
+            PerfMon.InitializeStarted();
             var displaySize = this.graphics.GraphicsDevice.DisplayMode.TitleSafeArea;
             this.graphics.PreferredBackBufferHeight = displaySize.Height - 100;
             this.graphics.PreferredBackBufferWidth = displaySize.Width;
             this.graphics.ApplyChanges();
             
-            this.dots = new Dot[this.dotCount];
-            this.bubbles = new Bubble[this.bubbleCount];
+            var bubbles = new Bubble[BubbleCount];
             
             var random = new Random();
 
-            for(int i = 0; i < this.dotCount; i++)
+            for(int i = 0; i < DotCount; i++)
             {
-                this.dots[i] = new Dot(random, this.bubbles);
-                this.dots[i].Initialize(graphics);
+                var dot = new Dot(random, bubbles);
+                dot.Initialize(graphics);
+                this.gameObjects.Add(dot);
             }
 
-            for(int i = 0; i < this.bubbleCount; i++)
+            for(int i = 0; i < BubbleCount; i++)
             {
-                this.bubbles[i] = new Bubble(random);
-                this.bubbles[i].Initialize(this.graphics);
+                var bubble = new Bubble(random);
+                bubble.Initialize(this.graphics);
+                this.gameObjects.Add(bubble);
+                bubbles[i] = bubble;
             }
 
             base.Initialize();
-            stopwatch.Stop();
-            Console.WriteLine("Initialize completed after {0} milliseconds", stopwatch.ElapsedMilliseconds);
+            PerfMon.InitializeFinished();
         }
 
         protected override void LoadContent()
         {
-            var stopwatch = Stopwatch.StartNew();
-            this.spriteBatch = new SpriteBatch(GraphicsDevice);
-            this.dot = Content.Load<Texture2D>(nameof(Sprites.Dot));
-            this.bubble = Content.Load<Texture2D>(nameof(Sprites.Bubble));
-            
-            for(int i = 0; i < this.dots.Length; i++)
+            var perfSpriteBatch = new SpriteBatch(this.GraphicsDevice);
+            var font = this.Content.Load<SpriteFont>(nameof(Fonts.Consolas));
+
+            PerfMon.LoadContentStarted();
+            this.spriteBatch = new SpriteBatch(this.GraphicsDevice);
+            this.dot = this.Content.Load<Texture2D>(nameof(Sprites.Dot));
+            this.bubble = this.Content.Load<Texture2D>(nameof(Sprites.Bubble));
+
+            for(var i = 0; i < this.gameObjects.Count; i++)
             {
-                this.dots[i].LoadContent(spriteBatch, this.dot);
+                if(this.gameObjects[i] is Dot)
+                {
+                    this.gameObjects[i].LoadContent(this.spriteBatch, this.dot);
+                    continue;
+                }
+
+                if(this.gameObjects[i] is Bubble)
+                {
+                    this.gameObjects[i].LoadContent(this.spriteBatch, this.bubble);
+                    continue;
+                }
             }
 
-            for(int i = 0; i < this.bubbles.Length; i++)
-            {
-                this.bubbles[i].LoadContent(this.spriteBatch, this.bubble);
-            }
-            stopwatch.Stop();
-            Console.WriteLine("Load Content completed after {0} milliseconds", stopwatch.ElapsedMilliseconds);
+            PerfMon.LoadContentFinished(perfSpriteBatch, font);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            var stopwatch = Stopwatch.StartNew();
+            PerfMon.UpdateStarted();
             if(GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            for(int i = 0; i < this.dots.Length; i++)
+            for(var i = 0; i < this.gameObjects.Count; i++)
             {
-                this.dots[i].Update(gameTime);
-            }
-
-            for(int i = 0; i < this.bubbles.Length; i++)
-            {
-                this.bubbles[i].Update(gameTime);
+                this.gameObjects[i].Update(gameTime);
             }
 
             base.Update(gameTime);
-            stopwatch.Stop();
-            Console.WriteLine("Update completed after {0} milliseconds", stopwatch.ElapsedMilliseconds);
+            PerfMon.UpdateFinished();
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            var stopwatch = Stopwatch.StartNew();
+            PerfMon.DrawStarted();
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             this.spriteBatch.Begin();
-            
-            for(var i = 0; i < this.dots.Length; i++)
+
+            for(var i = 0; i < this.gameObjects.Count; i++)
             {
-                this.dots[i].Draw(gameTime);
+                this.gameObjects[i].Draw(gameTime);
             }
 
-            for(var i = 0; i < this.bubbles.Length; i++)
-            {
-                this.bubbles[i].Draw(gameTime);
-            }
-            
             this.spriteBatch.End();
 
             base.Draw(gameTime);
-            stopwatch.Stop();
-            Console.WriteLine("Draw completed after {0} milliseconds", stopwatch.ElapsedMilliseconds);
+            PerfMon.DrawFinished();
         }
     }
 }

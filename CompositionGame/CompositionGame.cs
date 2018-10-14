@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Diagnostics;
+using Common;
+using Common.PerformanceMonitoring;
 using CompositionGame.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using static CompositionGame.Scene;
 using static Common.Constants;
+using MathF = Common.MathF;
 
 namespace CompositionGame
 {
     public class CompositionGame : Game
     {
-        private readonly int dotCount;
-        private readonly int bubbleCount;
         private readonly GraphicsDeviceManager graphics;
         private readonly Texture2D[] texture2Ds;
         
@@ -24,38 +24,19 @@ namespace CompositionGame
             this.texture2Ds = new Texture2D[2];
             this.Content.RootDirectory = "Content";
             this.IsMouseVisible = true;
-
-            this.dotCount = 1000000;
-            this.bubbleCount = 20;
-        }
-
-        protected override void Initialize()
-        {
-            var stopwatch = Stopwatch.StartNew();
-
-            var displaySize = this.graphics.GraphicsDevice.DisplayMode.TitleSafeArea;
-            this.graphics.PreferredBackBufferHeight = displaySize.Height - 100;
-            this.graphics.PreferredBackBufferWidth = displaySize.Width;
-            this.graphics.ApplyChanges();
-            
-            var worldBoundsGameObject = new GameObject("World Bounds");
-            var worldBoundsComponent = new WorldBoundsComponent(this.graphics);
-            worldBoundsGameObject.AddComponent(worldBoundsComponent);
-            s_GameObjects.Add(worldBoundsGameObject);
+            this.IsFixedTimeStep = false;
 
             var random = new Random();
             
-            for(int i = 0; i < this.dotCount; i++)
+            for(int i = 0; i < DotCount; i++)
             {
                 var gameObject = new GameObject($"Dot #{i}");
                 
-                var positionComponent = new PositionComponent();
-                positionComponent.X = random.Next(worldBoundsComponent.MinX, worldBoundsComponent.MaxX);
-                positionComponent.Y = random.Next(worldBoundsComponent.MinY, worldBoundsComponent.MaxY);
+                var positionComponent = new PositionComponent(random);
                 gameObject.AddComponent(positionComponent);
 
-                var moveComponent = new MoveComponent(random, Dot.MinVelocity, Dot.MaxVelocity);
-                gameObject.AddComponent(moveComponent);
+                var velocityComponent = new VelocityComponent(random, Dot.MinVelocity, Dot.MaxVelocity);
+                gameObject.AddComponent(velocityComponent);
                 
                 var spriteComponent = new SpriteComponent();
                 var colors = new byte[3];
@@ -67,26 +48,85 @@ namespace CompositionGame
                 spriteComponent.index = Sprites.Dot;
                 gameObject.AddComponent(spriteComponent);
                 
+                var modifyVelocityComponent = new ModifyVelocityComponent();
+                gameObject.AddComponent(modifyVelocityComponent);
+                
                 s_GameObjects.Add(gameObject);
-                gameObject.Start();
+            }
+
+            for(var i = 0; i < BubbleCount; i++)
+            {
+                var gameObject = new GameObject($"Bubble #{i}");
+
+                var positionComponent = new PositionComponent(random);
+                gameObject.AddComponent(positionComponent);
+
+                var velocityComponent = new VelocityComponent(random, Bubble.MinVelocity, Bubble.MaxVelocity);
+                gameObject.AddComponent(velocityComponent);
+
+                var velocityModifier = (float)random.NextDouble() * (Bubble.MaxModifier - Bubble.MinModifier) + Bubble.MinModifier;
+
+                var spriteComponent = new SpriteComponent();
+                spriteComponent.ColorR = MathB.Select(0, byte.MaxValue, velocityModifier < 0.0f);
+                spriteComponent.ColorG = MathB.Select(0, byte.MaxValue, velocityModifier >= 0.0f);
+                spriteComponent.ColorB = byte.MinValue;
+                var scaleMax = MathF.Select(Bubble.MinModifier, Bubble.MaxModifier, velocityModifier >= 0.0f);
+                spriteComponent.Alpha = (byte)(int)(128 * (velocityModifier / scaleMax));
+                spriteComponent.index = Sprites.Bubble;
+                gameObject.AddComponent(spriteComponent);
+
+                var velocityModifierComponent = new VelocityModifierComponent();
+                velocityModifierComponent.VelocityModifier = velocityModifier;
+                gameObject.AddComponent(velocityModifierComponent);
+                
+                var sizeComponent = new SizeComponent();
+                sizeComponent.Size = 64;
+                gameObject.AddComponent(sizeComponent);
+
+                s_GameObjects.Add(gameObject);
+            }
+        }
+
+        protected override void Initialize()
+        {
+            PerfMon.InitializeStarted();
+
+            var displaySize = this.graphics.GraphicsDevice.DisplayMode.TitleSafeArea;
+            this.graphics.PreferredBackBufferHeight = displaySize.Height - 100;
+            this.graphics.PreferredBackBufferWidth = displaySize.Width;
+            this.graphics.ApplyChanges();
+            
+            var worldBoundsGameObject = new GameObject("World Bounds");
+            var worldBoundsComponent = new WorldBoundsComponent(this.graphics);
+            worldBoundsGameObject.AddComponent(worldBoundsComponent);
+            s_GameObjects.Add(worldBoundsGameObject);
+
+            for(var i = 0; i < s_GameObjects.Count; i++)
+            {
+                s_GameObjects[i].Start();
             }
 
             base.Initialize();
-            stopwatch.Stop();
-            Console.WriteLine("Initialize completed after {0} milliseconds", stopwatch.ElapsedMilliseconds);
+            PerfMon.InitializeFinished();
         }
 
         protected override void LoadContent()
         {
+            var perfSpriteBatch = new SpriteBatch(this.GraphicsDevice);
+            var font = this.Content.Load<SpriteFont>(nameof(Fonts.Consolas));
+
+            PerfMon.LoadContentStarted();
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             this.texture2Ds[Sprites.Dot] = Content.Load<Texture2D>(nameof(Sprites.Dot));
             this.texture2Ds[Sprites.Bubble] = Content.Load<Texture2D>(nameof(Sprites.Bubble));
+
+            PerfMon.LoadContentFinished(perfSpriteBatch, font);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            var stopwatch = Stopwatch.StartNew();
+            PerfMon.UpdateStarted();
             if(GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -98,12 +138,12 @@ namespace CompositionGame
             }
 
             base.Update(gameTime);
-            stopwatch.Stop();
-            Console.WriteLine("Update completed after {0} milliseconds", stopwatch.ElapsedMilliseconds);
+            PerfMon.UpdateFinished();
         }
 
         protected override void Draw(GameTime gameTime)
         {
+            PerfMon.DrawStarted();
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             this.spriteBatch.Begin();
@@ -122,8 +162,8 @@ namespace CompositionGame
                 }
             }
             this.spriteBatch.End();
-
             base.Draw(gameTime);
+            PerfMon.DrawFinished();
         }
     }
 }
