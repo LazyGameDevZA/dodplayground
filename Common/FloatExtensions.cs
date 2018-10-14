@@ -4,17 +4,8 @@ namespace Common
     {
         public static float Clamp(this float x, float min, float max)
         {
-            if(x < min)
-            {
-                return min;
-            }
-
-            if(x > max)
-            {
-                return max;
-            }
-
-            return x;
+            var minSelect = System.MathF.Max(x, min);
+            return System.MathF.Min(minSelect, max);
         }
     }
 }

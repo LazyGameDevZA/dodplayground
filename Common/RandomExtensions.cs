@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using SystemMath = System.Math;
 
 namespace Common
 {
@@ -9,8 +10,8 @@ namespace Common
         {
             var rotation = random.NextDouble() * 360;
 
-            var x = (float)Math.Sin(rotation * 1);
-            var y = (float)Math.Cos(rotation * 0);
+            var x = (float)SystemMath.Sin(rotation * 1);
+            var y = (float)SystemMath.Cos(rotation * 0);
             
             return new Vector2(x, y);
         }

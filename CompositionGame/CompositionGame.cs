@@ -15,17 +15,19 @@ namespace CompositionGame
     {
         private readonly GraphicsDeviceManager graphics;
         private readonly Texture2D[] texture2Ds;
-        
-        SpriteBatch spriteBatch;
+
+        private SpriteBatch spriteBatch;
 
         public CompositionGame()
         {
+            PerfMon.InitializeStarted();
+
             this.graphics = new GraphicsDeviceManager(this);
-            this.texture2Ds = new Texture2D[2];
             this.Content.RootDirectory = "Content";
             this.IsMouseVisible = true;
             this.IsFixedTimeStep = false;
             
+            this.texture2Ds = new Texture2D[2];
             var worldBoundsGameObject = new GameObject("World Bounds");
             var worldBoundsComponent = new WorldBoundsComponent(this.graphics);
             worldBoundsGameObject.AddComponent(worldBoundsComponent);
@@ -94,7 +96,6 @@ namespace CompositionGame
 
         protected override void Initialize()
         {
-            PerfMon.InitializeStarted();
 
             var displaySize = this.graphics.GraphicsDevice.DisplayMode.TitleSafeArea;
             this.graphics.PreferredBackBufferHeight = displaySize.Height - 100;
@@ -107,7 +108,6 @@ namespace CompositionGame
             }
 
             base.Initialize();
-            PerfMon.InitializeFinished();
         }
 
         protected override void LoadContent()
@@ -115,13 +115,12 @@ namespace CompositionGame
             var perfSpriteBatch = new SpriteBatch(this.GraphicsDevice);
             var font = this.Content.Load<SpriteFont>(nameof(Fonts.Consolas));
 
-            PerfMon.LoadContentStarted();
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             this.texture2Ds[Sprites.Dot] = Content.Load<Texture2D>(nameof(Sprites.Dot));
             this.texture2Ds[Sprites.Bubble] = Content.Load<Texture2D>(nameof(Sprites.Bubble));
 
-            PerfMon.LoadContentFinished(perfSpriteBatch, font);
+            PerfMon.InitializeFinished(perfSpriteBatch, font);
         }
 
         protected override void Update(GameTime gameTime)

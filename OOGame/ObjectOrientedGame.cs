@@ -21,18 +21,17 @@ namespace OOGame
 
         public ObjectOrientedGame()
         {
+            PerfMon.InitializeStarted();
+            
             this.graphics = new GraphicsDeviceManager(this);
             this.Content.RootDirectory = "Content";
             this.IsMouseVisible = true;
             this.IsFixedTimeStep = false;
             this.gameObjects = new List<IGameObject>(DotCount + BubbleCount);
-            
-            
         }
 
         protected override void Initialize()
         {
-            PerfMon.InitializeStarted();
             var displaySize = this.graphics.GraphicsDevice.DisplayMode.TitleSafeArea;
             this.graphics.PreferredBackBufferHeight = displaySize.Height - 100;
             this.graphics.PreferredBackBufferWidth = displaySize.Width;
@@ -58,7 +57,6 @@ namespace OOGame
             }
 
             base.Initialize();
-            PerfMon.InitializeFinished();
         }
 
         protected override void LoadContent()
@@ -66,7 +64,6 @@ namespace OOGame
             var perfSpriteBatch = new SpriteBatch(this.GraphicsDevice);
             var font = this.Content.Load<SpriteFont>(nameof(Fonts.Consolas));
 
-            PerfMon.LoadContentStarted();
             this.spriteBatch = new SpriteBatch(this.GraphicsDevice);
             this.dot = this.Content.Load<Texture2D>(nameof(Sprites.Dot));
             this.bubble = this.Content.Load<Texture2D>(nameof(Sprites.Bubble));
@@ -85,8 +82,8 @@ namespace OOGame
                     continue;
                 }
             }
-
-            PerfMon.LoadContentFinished(perfSpriteBatch, font);
+            
+            PerfMon.InitializeFinished(perfSpriteBatch, font);
         }
 
         protected override void Update(GameTime gameTime)
