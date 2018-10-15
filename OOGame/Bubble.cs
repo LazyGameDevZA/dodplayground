@@ -1,23 +1,21 @@
 ﻿using System;
 using Common;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using ObjectOriented;
 using MathF = Common.MathF;
+using static Common.Constants;
+using static Common.Constants.Bubble;
 
 namespace OOGame
 {
     internal class Bubble : IGameObject
     {
+        public Color SpriteColor { get; private set; }
+        public int SpriteIndex => Sprites.Bubble;
         public Vector2 Position { get; private set; }
 
         public float VelocityModifier { get; private set; }
 
-        private const float minModifier = -3.0f;
-        private const float maxModifier = 5.0f;
-        private const float maxVelocity = 10.0f;
-        private const float minVelocity = 1.0f;
-        
         private readonly Random random;
 
         private int boundX;
@@ -25,14 +23,7 @@ namespace OOGame
 
         private Vector2 velocity;
 
-        private byte red;
-        private byte green;
-        private byte alpha;
-
-        private SpriteBatch spriteBatch;
-        private Texture2D texture2D;
-
-        public float Size => 64;
+        public static float Size => 64;
 
         public Bubble(Random random)
         {
@@ -46,21 +37,16 @@ namespace OOGame
             
             this.Position = new Vector2(this.random.Next(this.boundX), this.random.Next(this.boundY));
 
-            var velocityMagnitude = (float)this.random.NextDouble() * (maxVelocity - minVelocity) + minVelocity;
+            var velocityMagnitude = (float)this.random.NextDouble() * (MaxVelocity - MinVelocity) + MinVelocity;
             this.velocity = this.random.NextVector2() * velocityMagnitude;
 
-            this.VelocityModifier = (float)this.random.NextDouble() * (maxModifier - minModifier) + minModifier;
+            this.VelocityModifier = (float)this.random.NextDouble() * (MaxModifier - MinModifier) + MinModifier;
 
-            this.red = MathB.Select(0, byte.MaxValue, this.VelocityModifier < 0.0f);
-            this.green = MathB.Select(0, byte.MaxValue, this.VelocityModifier >= 0.0f);
-            var scaleMax = MathF.Select(minModifier, maxModifier, this.VelocityModifier >= 0.0f);
-            this.alpha = (byte)(int)(128 * (this.VelocityModifier / scaleMax));
-        }
-
-        public void LoadContent(SpriteBatch spriteBatch, Texture2D texture2D)
-        {
-            this.spriteBatch = spriteBatch;
-            this.texture2D = texture2D;
+            var red = MathB.Select(0, byte.MaxValue, this.VelocityModifier < 0.0f);
+            var green = MathB.Select(0, byte.MaxValue, this.VelocityModifier >= 0.0f);
+            var scaleMax = MathF.Select(MinModifier, MaxModifier, this.VelocityModifier >= 0.0f);
+            var alpha = (byte)(int)(128 * (this.VelocityModifier / scaleMax));
+            this.SpriteColor = new Color(red, green, byte.MinValue, alpha);
         }
 
         public void Update(GameTime gameTime)
@@ -79,13 +65,6 @@ namespace OOGame
             this.velocity *= multiply;
 
             this.Position = new Vector2(this.Position.X.Clamp(minX, maxX), this.Position.Y.Clamp(minY, maxY));
-        }
-
-        public void Draw(GameTime gameTime)
-        {
-            var color = new Color(this.red, this.green, byte.MinValue, this.alpha);
-            var origin = new Vector2(this.texture2D.Width / 2, this.texture2D.Height / 2);
-            this.spriteBatch.Draw(this.texture2D, this.Position, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
         }
     }
 }

@@ -2,10 +2,10 @@ using System.Runtime.CompilerServices;
 
 namespace Common
 {
-    public static class MathF
+    public static class Math
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Select(float x, float y, bool predicate)
+        public static int Select(int x, int y, bool predicate)
         {
             return predicate ? y : x;
         }

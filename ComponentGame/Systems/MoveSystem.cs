@@ -1,4 +1,3 @@
-using System.Numerics;
 using Common;
 using ComponentGame.Components;
 using Microsoft.Xna.Framework;

@@ -28,7 +28,9 @@ namespace ComponentGame
 
         private MoveSystem moveSystem;
         private VelocityModifierSystem velocityModifierSystem;
-        private DrawSystem drawSystem;
+
+        private Texture2D[] texture2Ds;
+        private SpriteBatch spriteBatch;
 
         public ComponentGame()
         {
@@ -125,14 +127,12 @@ namespace ComponentGame
             var perfSpriteBatch = new SpriteBatch(this.GraphicsDevice);
             var font = this.Content.Load<SpriteFont>(nameof(Fonts.Consolas));
 
-            var spriteBatch = new SpriteBatch(GraphicsDevice);
+            this.spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            var texture2Ds = new Texture2D[2];
-            texture2Ds[Sprites.Dot] = Content.Load<Texture2D>(nameof(Sprites.Dot));
-            texture2Ds[Sprites.Bubble] = Content.Load<Texture2D>(nameof(Sprites.Bubble));
+            this.texture2Ds = new Texture2D[2];
+            this.texture2Ds[Sprites.Dot] = Content.Load<Texture2D>(nameof(Sprites.Dot));
+            this.texture2Ds[Sprites.Bubble] = Content.Load<Texture2D>(nameof(Sprites.Bubble));
             
-            this.drawSystem = new DrawSystem(spriteBatch, texture2Ds, this.entityCount, this.positionComponents, this.spriteComponents);
-
             PerfMon.InitializeFinished(perfSpriteBatch, font);
         }
 
@@ -158,7 +158,18 @@ namespace ComponentGame
             
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            this.drawSystem.Draw();
+            this.spriteBatch.Begin();
+
+            for(int i = 0; i < this.entityCount; i++)
+            {
+                var texture2D = this.texture2Ds[this.spriteComponents[i].Index];
+                var position = new Vector2(this.positionComponents[i].Value.X, this.positionComponents[i].Value.Y);
+                var color = new Color(this.spriteComponents[i].ColorR, this.spriteComponents[i].ColorG, this.spriteComponents[i].ColorB, this.spriteComponents[i].Alpha);
+                var origin = new Vector2(texture2D.Width / 2, texture2D.Height / 2);
+                this.spriteBatch.Draw(texture2D, position, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
+            }
+            
+            this.spriteBatch.End();
 
             base.Draw(gameTime);
             
