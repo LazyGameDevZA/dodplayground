@@ -80,10 +80,7 @@ namespace ComponentGame
                 var velMin = MathF.Select(Dot.MinVelocity, Bubble.MinVelocity, entityTypePredicate);
                 var velMax = MathF.Select(Dot.MaxVelocity, Bubble.MaxVelocity, entityTypePredicate);
 
-                var velocityConstraint = new VelocityConstraintComponent();
-                velocityConstraint.Min = velMin;
-                velocityConstraint.Max = velMax;
-                this.velocityConstraintComponents[i] = velocityConstraint;
+                this.velocityConstraintComponents[i] = new VelocityConstraintComponent(velMin, velMax);
 
                 var velocity = new VelocityComponent();
                 velocity.Value = random.NextVelocity(velMin, velMax);
@@ -97,25 +94,20 @@ namespace ComponentGame
 
                 var dotColors = new byte[3];
                 random.NextBytes(dotColors);
-                var sprite = new SpriteComponent();
-                sprite.ColorR = MathB.Select(dotColors[0], bubbleColorR, entityTypePredicate);
-                sprite.ColorG = MathB.Select(dotColors[1], bubbleColorG, entityTypePredicate);
-                sprite.ColorB = MathB.Select(dotColors[2], byte.MinValue, entityTypePredicate);
-                sprite.Alpha = MathB.Select(byte.MaxValue, bubbleAlpha, entityTypePredicate);
-                sprite.Index = Math.Select(Sprites.Dot, Sprites.Bubble, entityTypePredicate);
-                this.spriteComponents[i] = sprite;
+                var colorR = MathB.Select(dotColors[0], bubbleColorR, entityTypePredicate);
+                var colorG = MathB.Select(dotColors[1], bubbleColorG, entityTypePredicate);
+                var colorB = MathB.Select(dotColors[2], byte.MinValue, entityTypePredicate);
+                var alpha = MathB.Select(byte.MaxValue, bubbleAlpha, entityTypePredicate);
+                var index = Math.Select(Sprites.Dot, Sprites.Bubble, entityTypePredicate);
+                this.spriteComponents[i] = new SpriteComponent(colorR, colorG, colorB, alpha, index);
                 
                 if(entityTypePredicate)
                 {
                     var modifierIndex = i - DotCount;
                     
-                    var size = new SizeComponent();
-                    size.Value = 64;
-                    this.sizeComponents[modifierIndex] = size;
+                    this.sizeComponents[modifierIndex] = new SizeComponent(64);
                     
-                    var velocityModifier = new VelocityModifierComponent();
-                    velocityModifier.Value = velocityModifierValue;
-                    this.velocityModifierComponents[modifierIndex] = velocityModifier;
+                    this.velocityModifierComponents[modifierIndex] = new VelocityModifierComponent(velocityModifierValue);
                 }
             }
 
@@ -160,13 +152,15 @@ namespace ComponentGame
 
             this.spriteBatch.Begin();
 
+            var sprites = new Span<SpriteComponent>(this.spriteComponents);
+            var positions = new Span<PositionComponent>(this.positionComponents);
+
             for(int i = 0; i < this.entityCount; i++)
             {
-                var texture2D = this.texture2Ds[this.spriteComponents[i].Index];
-                var position = new Vector2(this.positionComponents[i].Value.X, this.positionComponents[i].Value.Y);
-                var color = new Color(this.spriteComponents[i].ColorR, this.spriteComponents[i].ColorG, this.spriteComponents[i].ColorB, this.spriteComponents[i].Alpha);
+                var texture2D = this.texture2Ds[sprites[i].Index];
+                var color = new Color(sprites[i].ColorR, sprites[i].ColorG, sprites[i].ColorB, sprites[i].Alpha);
                 var origin = new Vector2(texture2D.Width / 2, texture2D.Height / 2);
-                this.spriteBatch.Draw(texture2D, position, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
+                this.spriteBatch.Draw(texture2D, positions[i].Value, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
             }
             
             this.spriteBatch.End();

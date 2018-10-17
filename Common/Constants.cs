@@ -2,7 +2,7 @@ namespace Common
 {
     public static class Constants
     {
-        public const int DotCount = 500000;
+        public const int DotCount = 250000;
         public const int BubbleCount = 20;
         
         public static class Dot

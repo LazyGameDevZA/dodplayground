@@ -1,6 +1,6 @@
+using System;
 using Common;
 using ComponentGame.Components;
-using Microsoft.Xna.Framework;
 using MathF = System.MathF;
 
 namespace ComponentGame.Systems
@@ -35,11 +35,16 @@ namespace ComponentGame.Systems
 
         public void Update(float deltaTime)
         {
+            var positions = new Span<PositionComponent>(this.positionComponents);
+            var velocityConstraints = new Span<VelocityConstraintComponent>(this.constraintComponents);
+            var velocities = new Span<VelocityComponent>(this.velocityComponents);
+            var modifiers = new Span<VelocityModifierComponent>(this.modifierComponents);
+            
             for(int i = this.velocityModifierOffset; i < this.length; i++)
             {
                 for(int j = 0; j < this.velocityModifierOffset; j++)
                 {
-                    var diff = this.positionComponents[j].Value - this.positionComponents[i].Value;
+                    var diff = positions[j].Value - positions[i].Value;
 
                     var modifierIndex = i - this.velocityModifierOffset;
                     if(MathF.Pow(this.sizeComponents[modifierIndex].Value, 2) < diff.LengthSquared())
@@ -47,12 +52,12 @@ namespace ComponentGame.Systems
                         continue;
                     }
 
-                    var velocity = this.velocityComponents[j];
+                    var velocity = velocities[j];
                     var velocityValue = velocity.Value;
-                    velocityValue = velocityValue + velocityValue * this.modifierComponents[modifierIndex].Value * deltaTime;
-                    velocity.Value = velocityValue.ClampMagnitude(this.constraintComponents[j].Min, this.constraintComponents[j].Max);
+                    velocityValue = velocityValue + velocityValue * modifiers[modifierIndex].Value * deltaTime;
+                    velocity.Value = velocityValue.ClampMagnitude(velocityConstraints[j].Min, velocityConstraints[j].Max);
 
-                    this.velocityComponents[j] = velocity;
+                    velocities[j] = velocity;
                 }
             }
         }

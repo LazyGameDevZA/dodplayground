@@ -1,7 +1,12 @@
 namespace ComponentGame.Components
 {
-    public struct VelocityModifierComponent
+    public readonly struct VelocityModifierComponent
     {
-        public float Value;
+        public readonly float Value;
+
+        public VelocityModifierComponent(float value)
+        {
+            this.Value = value;
+        }
     }
 }

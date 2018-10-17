@@ -49,11 +49,12 @@ namespace Common.PerformanceMonitoring
 
             spriteBatch.Begin();
             
-            spriteBatch.Draw(dataBackdrop, new Rectangle(5, 5, 205, 65), Color.White);
+            spriteBatch.Draw(dataBackdrop, new Rectangle(5, 5, 205, 85), Color.White);
             
             spriteBatch.DrawString(spriteFont, $"{"Initialize:", -15}{initialize.ElapsedMilliseconds, 4} ms", new Vector2(10, 10), Color.Black);
             spriteBatch.DrawString(spriteFont, $"{"Update:", -15}{update.ElapsedMilliseconds, 4} ms", new Vector2(10, 30), Color.Black);
             spriteBatch.DrawString(spriteFont, $"{"Draw:", -15}{draw.ElapsedMilliseconds, 4} ms", new Vector2(10, 50), Color.Black);
+            spriteBatch.DrawString(spriteFont, $"{"Total:", -15}{update.ElapsedMilliseconds + draw.ElapsedMilliseconds, 4} ms", new Vector2(10, 70), Color.Black);
             
             spriteBatch.End();
         }

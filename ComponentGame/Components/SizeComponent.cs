@@ -1,7 +1,12 @@
 namespace ComponentGame.Components
 {
-    public struct SizeComponent
+    public readonly struct SizeComponent
     {
-        public float Value;
+        public readonly float Value;
+
+        public SizeComponent(float value)
+        {
+            this.Value = value;
+        }
     }
 }
