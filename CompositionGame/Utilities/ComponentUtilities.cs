@@ -8,7 +8,7 @@ namespace CompositionGame.Utilities
         public static IList<TComponent> FindAllComponentsOfType<TComponent>()
             where TComponent: class, IComponent
         {
-            var components = new List<TComponent>(s_GameObjects.Count);
+            var components = new List<TComponent>();
 
             foreach(var gameObject in s_GameObjects)
             {

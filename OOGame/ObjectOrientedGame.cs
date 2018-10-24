@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using Common.PerformanceMonitoring;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using static Common.Constants;
+using static OOGame.Scene;
 
 namespace OOGame
 {
     public class ObjectOrientedGame : Game
     {
         private readonly GraphicsDeviceManager graphics;
-        private readonly GameObject[] gameObjects;
 
         private SpriteBatch spriteBatch;
         private Texture2D[] texture2Ds;
@@ -24,24 +23,19 @@ namespace OOGame
             this.Content.RootDirectory = "Content";
             this.IsMouseVisible = true;
             this.IsFixedTimeStep = false;
-            this.gameObjects = new GameObject[DotCount + BubbleCount];
-            
-            var bubbles = new Bubble[BubbleCount];
             
             var random = new Random();
 
-            var gameObjects = new Span<GameObject>(this.gameObjects);
             for(int i = 0; i < DotCount; i++)
             {
-                var dot = new Dot(random, bubbles);
-                gameObjects[i] = dot;
+                var dot = new Dot(random);
+                s_GameObjects.Add(dot);
             }
 
             for(int i = 0; i < BubbleCount; i++)
             {
                 var bubble = new Bubble(random);
-                gameObjects[i + DotCount] = bubble;
-                bubbles[i] = bubble;
+                s_GameObjects.Add(bubble);
             }
         }
 
@@ -52,10 +46,9 @@ namespace OOGame
             this.graphics.PreferredBackBufferWidth = displaySize.Width;
             this.graphics.ApplyChanges();
 
-            var gameObjects = new Span<GameObject>(this.gameObjects);
-            for(int i = 0; i < this.gameObjects.Length; i++)
+            for(int i = 0; i < s_GameObjects.Count; i++)
             {
-                gameObjects[i].Initialize(this.graphics);
+                s_GameObjects[i].Initialize(this.graphics);
             }
 
             base.Initialize();
@@ -80,11 +73,9 @@ namespace OOGame
             if(GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             
-            var gameObjects = new Span<GameObject>(this.gameObjects);
-
-            for(var i = 0; i < this.gameObjects.Length; i++)
+            for(var i = 0; i < s_GameObjects.Count; i++)
             {
-                gameObjects[i].Update(gameTime);
+                s_GameObjects[i].Update(gameTime);
             }
 
             base.Update(gameTime);
@@ -98,14 +89,13 @@ namespace OOGame
 
             this.spriteBatch.Begin();
           
-            var gameObjects = new Span<GameObject>(this.gameObjects);
-
-            for(var i = 0; i < this.gameObjects.Length; i++)
+            for(var i = 0; i < s_GameObjects.Count; i++)
             {
-                var texture2D = this.texture2Ds[gameObjects[i].SpriteIndex];
+                var gameObject = s_GameObjects[i];
+                var texture2D = this.texture2Ds[gameObject.SpriteIndex];
                 var origin = new Vector2(texture2D.Width / 2, texture2D.Height / 2);
-                this.spriteBatch.Draw(texture2D, gameObjects[i].Position, null, gameObjects[i].SpriteColor, 0.0f, origin, Vector2.One,
-                    SpriteEffects.None, 0.0f);
+                this.spriteBatch.Draw(texture2D, gameObject.Position, null, gameObject.SpriteColor, 0.0f, origin, Vector2.One,
+                    SpriteEffects.None, gameObject.SpriteIndex);
             }
 
             this.spriteBatch.End();

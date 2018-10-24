@@ -35,10 +35,10 @@ namespace ComponentGame.Systems
 
         public void Update(float deltaTime)
         {
-            var positions = new Span<PositionComponent>(this.positionComponents);
-            var velocityConstraints = new Span<VelocityConstraintComponent>(this.constraintComponents);
-            var velocities = new Span<VelocityComponent>(this.velocityComponents);
-            var modifiers = new Span<VelocityModifierComponent>(this.modifierComponents);
+            var positions = new Span<PositionComponent>(positionComponents);
+            var velocityConstraints = new Span<VelocityConstraintComponent>(constraintComponents);
+            var velocities = new Span<VelocityComponent>(velocityComponents);
+            var modifiers = new Span<VelocityModifierComponent>(modifierComponents);
             
             for(int i = this.velocityModifierOffset; i < this.length; i++)
             {

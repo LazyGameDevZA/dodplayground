@@ -1,25 +1,26 @@
 using System;
+using System.Collections.Generic;
 using Common;
 using Microsoft.Xna.Framework;
 using static Common.Constants.Dot;
 using static Common.Constants;
+using static OOGame.Utilities.GameObjectUtilities;
 
 namespace OOGame
 {
     internal class Dot : GameObject
     {
         private Color spriteColor;
+        private static IList<Bubble> bubbles;
 
         public override Color SpriteColor => this.spriteColor;
-        
-        private readonly Random random;
-        private readonly Bubble[] bubbles;
 
-        public Dot(Random random, Bubble[] bubbles)
+        private readonly Random random;
+
+        public Dot(Random random)
             : base(Sprites.Dot, random)
         {
             this.random = random;
-            this.bubbles = bubbles;
         }
 
         protected override Vector2 Velocity { get; set; }
@@ -35,14 +36,21 @@ namespace OOGame
             this.random.NextBytes(colors);
 
             this.spriteColor = new Color(colors[0], colors[1], colors[2], byte.MaxValue);
+
+            if(bubbles != null && bubbles.Count != 0)
+            {
+                return;
+            }
+
+            bubbles = FindAllObjectsOfType<Bubble>();
         }
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            for(int i = 0; i < this.bubbles.Length; i++)
+            for(int i = 0; i < bubbles.Count; i++)
             {
-                var bubble = this.bubbles[i];
+                var bubble = bubbles[i];
                 var diff = this.Position - bubble.Position;
 
                 if(System.MathF.Pow(Bubble.Size, 2) < diff.LengthSquared())

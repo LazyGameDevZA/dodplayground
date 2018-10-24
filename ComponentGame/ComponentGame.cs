@@ -11,20 +11,13 @@ using static Common.Constants;
 using Color = Microsoft.Xna.Framework.Color;
 using Math = Common.Math;
 using MathF = Common.MathF;
+using static ComponentGame.Scene;
 
 namespace ComponentGame
 {
     public class ComponentGame : Game
     {
         private readonly GraphicsDeviceManager graphics;
-        private readonly int entityCount;
-        private readonly int velocityModifierCount;
-        private readonly PositionComponent[] positionComponents;
-        private readonly VelocityConstraintComponent[] velocityConstraintComponents;
-        private readonly VelocityComponent[] velocityComponents;
-        private readonly SpriteComponent[] spriteComponents;
-        private readonly SizeComponent[] sizeComponents;
-        private readonly VelocityModifierComponent[] velocityModifierComponents;
 
         private MoveSystem moveSystem;
         private VelocityModifierSystem velocityModifierSystem;
@@ -40,16 +33,6 @@ namespace ComponentGame
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             IsFixedTimeStep = false;
-            
-            this.entityCount = DotCount + BubbleCount;
-            this.positionComponents = new PositionComponent[this.entityCount];
-            this.velocityConstraintComponents = new VelocityConstraintComponent[this.entityCount];
-            this.velocityComponents = new VelocityComponent[this.entityCount];
-            this.spriteComponents = new SpriteComponent[this.entityCount];
-
-            this.velocityModifierCount = BubbleCount;
-            this.sizeComponents = new SizeComponent[this.velocityModifierCount];
-            this.velocityModifierComponents = new VelocityModifierComponent[this.velocityModifierCount];
         }
 
         protected override void Initialize()
@@ -64,27 +47,27 @@ namespace ComponentGame
             const int minY = 0;
             var maxY = this.graphics.PreferredBackBufferHeight;
             
-            this.moveSystem = new MoveSystem(this.graphics, this.entityCount, this.positionComponents, this.velocityComponents);
-            this.velocityModifierSystem = new VelocityModifierSystem(this.entityCount, this.velocityModifierCount, this.positionComponents,
-                this.velocityConstraintComponents, this.velocityComponents, this.sizeComponents, this.velocityModifierComponents);
+            this.moveSystem = new MoveSystem(this.graphics, EntityCount, PositionComponents, VelocityComponents);
+            this.velocityModifierSystem = new VelocityModifierSystem(EntityCount, VelocityModifierCount, PositionComponents,
+                VelocityConstraintComponents, VelocityComponents, SizeComponents, VelocityModifierComponents);
 
             var random = new Random();
             
-            for(int i = 0; i < this.entityCount; i++)
+            for(int i = 0; i < EntityCount; i++)
             {
                 var position = new PositionComponent();
                 position.Value = new Vector2(random.Next(minX, maxX), random.Next(minY, maxY));
-                this.positionComponents[i] = position;
+                PositionComponents[i] = position;
 
                 var entityTypePredicate = i >= DotCount;
                 var velMin = MathF.Select(Dot.MinVelocity, Bubble.MinVelocity, entityTypePredicate);
                 var velMax = MathF.Select(Dot.MaxVelocity, Bubble.MaxVelocity, entityTypePredicate);
 
-                this.velocityConstraintComponents[i] = new VelocityConstraintComponent(velMin, velMax);
+                VelocityConstraintComponents[i] = new VelocityConstraintComponent(velMin, velMax);
 
                 var velocity = new VelocityComponent();
                 velocity.Value = random.NextVelocity(velMin, velMax);
-                this.velocityComponents[i] = velocity;
+                VelocityComponents[i] = velocity;
                 
                 var velocityModifierValue = (float)random.NextDouble() * (Bubble.MaxModifier - Bubble.MinModifier) + Bubble.MinModifier;
                 var scaleMax = MathF.Select(Bubble.MinModifier, Bubble.MaxModifier, velocityModifierValue >= 0.0f);
@@ -99,15 +82,15 @@ namespace ComponentGame
                 var colorB = MathB.Select(dotColors[2], byte.MinValue, entityTypePredicate);
                 var alpha = MathB.Select(byte.MaxValue, bubbleAlpha, entityTypePredicate);
                 var index = Math.Select(Sprites.Dot, Sprites.Bubble, entityTypePredicate);
-                this.spriteComponents[i] = new SpriteComponent(colorR, colorG, colorB, alpha, index);
+                SpriteComponents[i] = new SpriteComponent(colorR, colorG, colorB, alpha, index);
                 
                 if(entityTypePredicate)
                 {
                     var modifierIndex = i - DotCount;
                     
-                    this.sizeComponents[modifierIndex] = new SizeComponent(64);
+                    SizeComponents[modifierIndex] = new SizeComponent(64);
                     
-                    this.velocityModifierComponents[modifierIndex] = new VelocityModifierComponent(velocityModifierValue);
+                    VelocityModifierComponents[modifierIndex] = new VelocityModifierComponent(velocityModifierValue);
                 }
             }
 
@@ -150,17 +133,17 @@ namespace ComponentGame
             
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            this.spriteBatch.Begin();
+            this.spriteBatch.Begin(SpriteSortMode.FrontToBack);
 
-            var sprites = new Span<SpriteComponent>(this.spriteComponents);
-            var positions = new Span<PositionComponent>(this.positionComponents);
+            var sprites = new Span<SpriteComponent>(SpriteComponents);
+            var positions = new Span<PositionComponent>(PositionComponents);
 
-            for(int i = 0; i < this.entityCount; i++)
+            for(int i = 0; i < EntityCount; i++)
             {
                 var texture2D = this.texture2Ds[sprites[i].Index];
                 var color = new Color(sprites[i].ColorR, sprites[i].ColorG, sprites[i].ColorB, sprites[i].Alpha);
                 var origin = new Vector2(texture2D.Width / 2, texture2D.Height / 2);
-                this.spriteBatch.Draw(texture2D, positions[i].Value, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, 0.0f);
+                this.spriteBatch.Draw(texture2D, positions[i].Value, null, color, 0.0f, origin, Vector2.One, SpriteEffects.None, sprites[i].Index);
             }
             
             this.spriteBatch.End();
