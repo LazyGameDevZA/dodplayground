@@ -23,6 +23,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 ProjectSection(SolutionItems) = preProject
 	Presentation\Index.md = Presentation\Index.md
 	Presentation\GameRules.md = Presentation\GameRules.md
+	Presentation\OOGame.md = Presentation\OOGame.md
+	Presentation\CompositionGame.md = Presentation\CompositionGame.md
+	Presentation\OOGameIssues.md = Presentation\OOGameIssues.md
+	Presentation\CompositionGameIssues.md = Presentation\CompositionGameIssues.md
+	Presentation\MemoryRefresher.md = Presentation\MemoryRefresher.md
+	Presentation\ArrayOfStructures.md = Presentation\ArrayOfStructures.md
+	Presentation\StructureOfArrays.md = Presentation\StructureOfArrays.md
+	Presentation\ComponentGame.md = Presentation\ComponentGame.md
+	Presentation\ComponentGameIssues.md = Presentation\ComponentGameIssues.md
+	Presentation\DataOrientedDesign.md = Presentation\DataOrientedDesign.md
+	Presentation\References.md = Presentation\References.md
 EndProjectSection
 EndProject
 Global

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
 using static CompositionGame.Utilities.ComponentUtilities;
 
 namespace CompositionGame.Components

@@ -18,10 +18,10 @@ Each of the examples can be found under the "01 - Game" solution folder. There a
 
 * Aras Pranckevičius with [these slides](https://aras-p.info/texts/files/2018Academy%20-%20ECS-DoD.pdf) he put together to demonstrate to the Data-Oriented Design principles Unity tries to apply with their ECS implementation.
 * Richard Fabian's [Data-Oriented Design](http://www.dataorienteddesign.com/site.php) provided a number of insights into the topic.
-
+* Jacco Bikker's tutorial on [Practical SIMD Programming](http://www.cs.uu.nl/docs/vakken/magr/2017-2018/files/SIMD%20Tutorial.pdf)
 
 Many more sources can be found [here](https://github.com/dbartolini/data-oriented-design) and it's also seeing updates as more sources become available.
 
-##Presentation
+## Presentation
 
 [Go to presentation](Presentation/Index.md)

@@ -7,14 +7,21 @@
 Art used (coloured at runtime):
 ![Dot]
 ![Bubble]
-##Some numbers
+
+Use [MonoGame](http://www.monogame.net/) for basic framework.
+
+## Some numbers
 
 Base numbers to be used for this simple "game"
 
 * 200k Dots
 * 20 Bubbles
 
-[GameObject](../OOGame/GameObject.cs#L34)
+[OOGame](OOGame.md)
+
+[Composition Game](CompositionGame.md)
+
+[Component Game](ComponentGame.md)
 
 [dot]:../Content/Content/Dot.png
 [bubble]:../Content/Content/Bubble.png

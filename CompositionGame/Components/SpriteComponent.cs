@@ -1,5 +1,3 @@
-using Microsoft.Xna.Framework.Graphics;
-
 namespace CompositionGame.Components
 {
     internal class SpriteComponent : Component
