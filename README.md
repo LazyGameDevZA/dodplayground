@@ -21,3 +21,7 @@ Each of the examples can be found under the "01 - Game" solution folder. There a
 
 
 Many more sources can be found [here](https://github.com/dbartolini/data-oriented-design) and it's also seeing updates as more sources become available.
+
+##Presentation
+
+[Go to presentation](Presentation/Index.md)

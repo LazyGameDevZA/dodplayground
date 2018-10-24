@@ -19,6 +19,12 @@ EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 - Game", "01 - Game", "{21031301-2277-4B8B-8ABA-19FA2D89214E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{F5960669-D031-4F7F-A133-E418600FFE93}"
+ProjectSection(SolutionItems) = preProject
+	Presentation\Index.md = Presentation\Index.md
+	Presentation\GameRules.md = Presentation\GameRules.md
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
