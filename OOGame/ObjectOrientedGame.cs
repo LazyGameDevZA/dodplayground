@@ -4,7 +4,6 @@ using Common.PerformanceMonitoring;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ObjectOriented;
 using static Common.Constants;
 
 namespace OOGame
@@ -12,7 +11,7 @@ namespace OOGame
     public class ObjectOrientedGame : Game
     {
         private readonly GraphicsDeviceManager graphics;
-        private readonly IGameObject[] gameObjects;
+        private readonly GameObject[] gameObjects;
 
         private SpriteBatch spriteBatch;
         private Texture2D[] texture2Ds;
@@ -25,13 +24,13 @@ namespace OOGame
             this.Content.RootDirectory = "Content";
             this.IsMouseVisible = true;
             this.IsFixedTimeStep = false;
-            this.gameObjects = new IGameObject[DotCount + BubbleCount];
+            this.gameObjects = new GameObject[DotCount + BubbleCount];
             
             var bubbles = new Bubble[BubbleCount];
             
             var random = new Random();
 
-            var gameObjects = new Span<IGameObject>(this.gameObjects);
+            var gameObjects = new Span<GameObject>(this.gameObjects);
             for(int i = 0; i < DotCount; i++)
             {
                 var dot = new Dot(random, bubbles);
@@ -53,7 +52,7 @@ namespace OOGame
             this.graphics.PreferredBackBufferWidth = displaySize.Width;
             this.graphics.ApplyChanges();
 
-            var gameObjects = new Span<IGameObject>(this.gameObjects);
+            var gameObjects = new Span<GameObject>(this.gameObjects);
             for(int i = 0; i < this.gameObjects.Length; i++)
             {
                 gameObjects[i].Initialize(this.graphics);
@@ -81,7 +80,7 @@ namespace OOGame
             if(GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             
-            var gameObjects = new Span<IGameObject>(this.gameObjects);
+            var gameObjects = new Span<GameObject>(this.gameObjects);
 
             for(var i = 0; i < this.gameObjects.Length; i++)
             {
@@ -99,7 +98,7 @@ namespace OOGame
 
             this.spriteBatch.Begin();
           
-            var gameObjects = new Span<IGameObject>(this.gameObjects);
+            var gameObjects = new Span<GameObject>(this.gameObjects);
 
             for(var i = 0; i < this.gameObjects.Length; i++)
             {
