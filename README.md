@@ -6,6 +6,8 @@ Inspiration for this project came from  and serves as an experiment to better un
 
 Project setup should be relatively simple. Once the repository had been cloned simply restore all NuGet packages and issue a full build twice. Due to a slight oddity in how content is built within MonoGame there were some issues in having the common content copy correctly to the output directory.
 
+It's also advisable to install the MonoGame sdk as it takes care of installing the required C++ redistributables, but the most common content build issue that arises is remedied by installing the redistributable from [here](http://www.microsoft.com/en-NZ/download/details.aspx?id=30679). 
+
 ## Running
 
 Each of the examples can be found under the "01 - Game" solution folder. There are 3 different samples:
