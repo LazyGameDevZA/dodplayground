@@ -39,6 +39,7 @@ namespace ComponentGame.Systems
             var velocityConstraints = new Span<VelocityConstraintComponent>(constraintComponents);
             var velocities = new Span<VelocityComponent>(velocityComponents);
             var modifiers = new Span<VelocityModifierComponent>(modifierComponents);
+            var sizes = new Span<SizeComponent>(this.sizeComponents);
             
             for(int i = this.velocityModifierOffset; i < this.length; i++)
             {
@@ -47,7 +48,7 @@ namespace ComponentGame.Systems
                     var diff = positions[j].Value - positions[i].Value;
 
                     var modifierIndex = i - this.velocityModifierOffset;
-                    if(MathF.Pow(this.sizeComponents[modifierIndex].Value, 2) < diff.LengthSquared())
+                    if(MathF.Pow(sizes[modifierIndex].Value, 2) < diff.LengthSquared())
                     {
                         continue;
                     }

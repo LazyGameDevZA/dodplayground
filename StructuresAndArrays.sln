@@ -36,6 +36,8 @@ ProjectSection(SolutionItems) = preProject
 	Presentation\References.md = Presentation\References.md
 EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiThreadComponentGame", "MultiThreadComponentGame\MultiThreadComponentGame.csproj", "{EEF92099-2C37-41FC-8284-932ECFCA953B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{B8372EF6-E8E5-4BA5-9E3F-B6769D173275}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8372EF6-E8E5-4BA5-9E3F-B6769D173275}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8372EF6-E8E5-4BA5-9E3F-B6769D173275}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEF92099-2C37-41FC-8284-932ECFCA953B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEF92099-2C37-41FC-8284-932ECFCA953B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEF92099-2C37-41FC-8284-932ECFCA953B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEF92099-2C37-41FC-8284-932ECFCA953B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2C147481-183D-4611-A4A0-A5AF88FF021A} = {0F4D98B0-B0B2-430D-9B0D-A8F84DF5A2C1}
@@ -69,5 +75,6 @@ Global
 		{B8372EF6-E8E5-4BA5-9E3F-B6769D173275} = {21031301-2277-4B8B-8ABA-19FA2D89214E}
 		{BEA5E37D-FFC9-4384-8119-E27094922981} = {21031301-2277-4B8B-8ABA-19FA2D89214E}
 		{C0E415F4-700D-457D-AA4A-B704F73814B6} = {21031301-2277-4B8B-8ABA-19FA2D89214E}
+		{EEF92099-2C37-41FC-8284-932ECFCA953B} = {21031301-2277-4B8B-8ABA-19FA2D89214E}
 	EndGlobalSection
 EndGlobal
